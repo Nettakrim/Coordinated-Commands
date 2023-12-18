@@ -10,6 +10,6 @@ public class CoordinatedCommandsClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		LOGGER.info("Hello Fabric world!");
+
 	}
 }

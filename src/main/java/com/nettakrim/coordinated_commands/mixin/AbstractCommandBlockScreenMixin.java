@@ -1,8 +1,6 @@
 package com.nettakrim.coordinated_commands.mixin;
 
 import com.nettakrim.coordinated_commands.CommandBlockPositionAccessor;
-import com.nettakrim.coordinated_commands.CoordinatedCommandsClient;
-import net.minecraft.block.Block;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractCommandBlockScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -16,7 +14,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +37,7 @@ public class AbstractCommandBlockScreenMixin extends Screen {
 	}
 
 	@Unique
-	private static Pattern pattern = Pattern.compile("(~(\\d|\\.|-)*( |$)|(\\d|\\.|-)+( |$)){3}");
+	private static final Pattern pattern = Pattern.compile("(~(\\d|\\.|-)*( |$)|(\\d|\\.|-)+( |$)){3}");
 
 	@Unique
 	private void toggleCoordinates(ButtonWidget buttonWidget) {
@@ -52,7 +49,6 @@ public class AbstractCommandBlockScreenMixin extends Screen {
 
 		BlockPos pos = positionAccessor.coordinatedCommands$getPosition();
 		boolean isConvertToAbsolute = text.contains("~");
-		CoordinatedCommandsClient.LOGGER.info(text+" "+isConvertToAbsolute);
 
 		Matcher matcher = pattern.matcher(text);
 		while (matcher.find()) {
@@ -61,8 +57,6 @@ public class AbstractCommandBlockScreenMixin extends Screen {
 			if (s.endsWith(" ")) n+=" ";
 			text = text.replace(s, n);
 		}
-
-		CoordinatedCommandsClient.LOGGER.info(pos.toString());
 
 		consoleCommandTextField.setText(text);
 	}
