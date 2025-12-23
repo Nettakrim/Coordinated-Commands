@@ -14,16 +14,10 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(MinecartCommandBlockScreen.class)
 public abstract class MinecartCommandBlockScreenMixin implements CommandBlockPositionAccessor {
-    @Shadow
-    @Final
-    private CommandBlockExecutor commandExecutor;
+    @Shadow @Final private CommandBlockMinecartEntity field_63536;
 
     @Override
     public BlockPos coordinatedCommands$getPosition() {
-        if (commandExecutor instanceof CommandBlockMinecartEntity.CommandExecutor commandExecutor2) {
-            Entity entity = commandExecutor2.getMinecart();
-            return new BlockPos(entity.getBlockX(), entity.getBlockY(), entity.getBlockZ());
-        }
-        return null;
+        return new BlockPos(field_63536.getBlockX(), field_63536.getBlockY(), field_63536.getBlockZ());
     }
 }
