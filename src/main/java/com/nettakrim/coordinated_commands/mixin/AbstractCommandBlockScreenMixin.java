@@ -1,13 +1,6 @@
 package com.nettakrim.coordinated_commands.mixin;
 
 import com.nettakrim.coordinated_commands.CommandBlockPositionAccessor;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.AbstractCommandBlockScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -17,13 +10,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractCommandBlockEditScreen;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
-@Mixin(AbstractCommandBlockScreen.class)
+@Mixin(AbstractCommandBlockEditScreen.class)
 public class AbstractCommandBlockScreenMixin extends Screen {
 	@Shadow
-	protected TextFieldWidget consoleCommandTextField;
+	protected EditBox commandEdit;
 
-	protected AbstractCommandBlockScreenMixin(Text title) {
+	protected AbstractCommandBlockScreenMixin(Component title) {
 		super(title);
 	}
 
@@ -33,19 +33,19 @@ public class AbstractCommandBlockScreenMixin extends Screen {
 			return;
 		}
 
-		addDrawableChild(ButtonWidget.builder(Text.literal("~"), this::toggleCoordinates).position(this.width / 2 + 160, this.height / 4 + 120 + 12).size(20, 20).build());
+		addRenderableWidget(Button.builder(Component.literal("~"), this::toggleCoordinates).pos(this.width / 2 + 160, this.height / 4 + 120 + 12).size(20, 20).build());
 	}
 
 	@Unique
 	private static final Pattern pattern = Pattern.compile("(~(\\d|\\.|-)*( |$)|(\\d|\\.|-)+( |$)){3}");
 
 	@Unique
-	private void toggleCoordinates(ButtonWidget buttonWidget) {
+	private void toggleCoordinates(Button buttonWidget) {
 		if (!(this instanceof CommandBlockPositionAccessor positionAccessor)) {
 			return;
 		}
 
-		String text = consoleCommandTextField.getText();
+		String text = commandEdit.getValue();
 
 		BlockPos pos = positionAccessor.coordinatedCommands$getPosition();
 		boolean isConvertToAbsolute = text.contains("~");
@@ -58,7 +58,7 @@ public class AbstractCommandBlockScreenMixin extends Screen {
 			text = text.replace(s, n);
 		}
 
-		consoleCommandTextField.setText(text);
+		commandEdit.setValue(text);
 	}
 
 	@Unique
@@ -100,7 +100,7 @@ public class AbstractCommandBlockScreenMixin extends Screen {
 	@Unique
 	private String toString(float f, boolean relative) {
 		if (relative && f == 0) return "";
-		int i = MathHelper.floor(f);
+		int i = Mth.floor(f);
 		return (f == i) ? Integer.toString(i) : Float.toString(f);
 	}
 }
