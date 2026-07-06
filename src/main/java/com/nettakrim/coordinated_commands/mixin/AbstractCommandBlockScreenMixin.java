@@ -37,7 +37,7 @@ public class AbstractCommandBlockScreenMixin extends Screen {
 	}
 
 	@Unique
-	private static final Pattern pattern = Pattern.compile("(~(\\d|\\.|-)*( |$)|(\\d|\\.|-)+( |$)){3}");
+	private static final Pattern pattern = Pattern.compile("(~([\\d.\\-])*( |$)|([\\d.\\-])+( |$)){3}");
 
 	@Unique
 	private void toggleCoordinates(Button buttonWidget) {
